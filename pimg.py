@@ -9,9 +9,7 @@ import matplotlib.image as mpimg
 #
 ##################################
 
-def imagem(file):
-    v = imread(file) if type(file) is str else file
-    return v
+# Função auxiliar
 
 
 def v_l(res, n):
@@ -28,8 +26,7 @@ def imread(filename):
 
 
 # Q.3
-def nchannels(file):
-    img = imagem(file)
+def nchannels(img):
     if len(img.shape) == 2:
         return 1
     else:
@@ -38,15 +35,13 @@ def nchannels(file):
 # Q.4
 
 
-def size(file):
-    img = imagem(file)
+def size(img):
     return img.shape[1], img.shape[0]
 
 # Q.5
 
 
-def rgb2gray(file):
-    img = imagem(file)
+def rgb2gray(img):
     if nchannels(img) == 1:
         print("A imagem já está em escala de cinza")
         return img
@@ -59,7 +54,7 @@ def rgb2gray(file):
 
 
 def imreadgray(file):
-    img = imagem(file)
+    img = imread(file)
     if nchannels(img) == 1:
         return img
     else:
@@ -68,8 +63,7 @@ def imreadgray(file):
 # Q.7
 
 
-def imshow(file):
-    img = imagem(file)
+def imshow(img):
     if nchannels(img) == 1:
         plt.imshow(img, cmap='gray', interpolation='nearest')
     else:
@@ -79,31 +73,27 @@ def imshow(file):
 # Q.8
 
 
-def tresh(file, treshold):
-    img = imagem(file)
+def tresh(img, treshold):
     return (img > treshold)*255
 
 
 # Q.9
 
 
-def negative(file):
-    img = imagem(file)
+def negative(img):
     return 255 - img
 
 # Q.10
 
 
-def contrast(file, r, m):
-    img = imread(file)
-    n = nchannels(file)
+def contrast(img, r, m):
+    n = nchannels(img)
     return np.array([[v_l([min(max(r * (x[i] - m) + m, 0), 255) for i in range(n)]) for x in row] for row in img], dtype=np.uint8)
 
 # Q.11
 
 
-def hist(file):
-    img = imagem(file)
+def hist(img):
     tv = np.zeros((256, nchannels(img)), dtype=np.uint32)
     if nchannels(img) == 1:
         arr = img.reshape(img.shape[0]*img.shape[1])
@@ -137,8 +127,7 @@ def showhist(hs, bin=1):
 # Q.14
 
 
-def histeq(file):
-    img = imagem(file)
+def histeq(img):
     hs = hist(img).reshape((1, 256))
     total = size(img)[1] * size(img)[0]
     tr = [sum(hs[0, :i+1])/float(total) for i in range(256)]
@@ -151,8 +140,8 @@ def f(img, x, y):
     return img[min(max(0, x), img.shape[0]-1), min(max(0, y), img.shape[1]-1)]
 
 
-def convolve(file, mask):
-    return er(file, mask, sum)
+def convolve(img, mask):
+    return er(img, mask, sum)
 
 # Q.16
 
@@ -164,8 +153,8 @@ def maskblur():
 # Q.17
 
 
-def blur(file):
-    return convolve(file, maskblur())
+def blur(img):
+    return convolve(img, maskblur())
 
 # Q.18
 
@@ -183,13 +172,11 @@ def seCross3():
 
 
 def er_pix(img,x, y, S, w, a, b, n, func):
-    rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0],n)
-    print(rgb.shape)
+    rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0], n)
     return v_l([func(rgb[:, i]) for i in range(n)], n)
 
 
-def er(file, mask, func):
-    img = imagem(file)
+def er(img, mask, func):
     n = nchannels(img)
     a, b = np.array(mask.shape)//2
     S = np.array([(x, y) for x in range(-b, b + 1) for y in range(-a, a + 1) if mask[x + a][y + a] != 0])
@@ -197,12 +184,12 @@ def er(file, mask, func):
     return np.array(arr, np.uint8)
 
 
-def erode(file, eb):
-    return er(file, eb, np.amin)
+def erode(img, eb):
+    return er(img, eb, np.amin)
 
 # Q.21
 
 
-def dilate(file, eb):
-    return er(file, eb, np.amax)
+def dilate(img, eb):
+    return er(img, eb, np.amax)
 
