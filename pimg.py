@@ -16,10 +16,7 @@ def v_l(res, n):
 # Q.2
 def imread(filename):
     img = mpimg.imread(filename)
-    if img.dtype == np.float32:
-        return np.array([[list(map(lambda a: int(255*a), x)) for x in row] for row in img],
-                        dtype=np.uint8)
-    return img
+    return np.array(255*img, dtype=np.uint8) if img.dtype == np.float32 else img
 
 # Q.3
 def nchannels(img):
@@ -31,7 +28,7 @@ def size(img):
 
 # Q.5
 def rgb2gray(img):
-    return np.array(np.dot(img, np.array([0.299,0.587,0.114])),dtype=np.uint8) if img.shape[2] == 3 else img
+    return np.array(np.dot(img, np.array([0.299, 0.587, 0.114])), dtype=np.uint8) if img.shape[2] == 3 else img
 
 
 # Q.6
