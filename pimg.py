@@ -101,16 +101,14 @@ def seCross3():
     return np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
 # Q.20
 
-
-def er_pix(img,x, y, S, w, a, b, n, func):
-    rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0], n)
-    return v_l([func(rgb[:, i]) for i in range(n)], n)
-
-def er(img, mask, func):
+def er(img, w, func):
     n = nchannels(img)
-    a, b = np.array(mask.shape)//2
-    S = np.array([(x, y) for x in range(-b, b + 1) for y in range(-a, a + 1) if mask[x + a][y + a] != 0])
-    arr = [[er_pix(img, x, y, S, mask, a, b, n,func) for y in range(size(img)[0])] for x in range(size(img)[1])]
+    a, b = np.array(w.shape)//2
+    S = np.array([(x, y) for x in range(-b, b + 1) for y in range(-a, a + 1) if w[x + a][y + a] != 0])
+    def er_pix(x, y):
+        rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0], n)
+        return v_l([func(rgb[:, i]) for i in range(n)], n)
+    arr = [[er_pix(x, y) for y in range(size(img)[0])] for x in range(size(img)[1])]
     return np.array(arr, np.uint8)
 
 def erode(img, eb):
