@@ -9,9 +9,24 @@ import matplotlib.image as mpimg
 #
 ##################################
 
-# Função auxiliar
+# Funções auxiliares
 def v_l(res, n):
     return res if n > 1 else res[0]
+
+def er(img, w, func):
+    n = nchannels(img)
+    a, b = np.array(w.shape)//2
+    S = np.array([(x, y) for x in range(-b, b + 1) for y in range(-a, a + 1) if w[x + a][y + a] != 0])
+
+    def er_pix(x, y):
+        rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0], n)
+        return v_l([func(rgb[:, i]) for i in range(n)], n)
+    arr = [[er_pix(x, y) for y in range(size(img)[0])] for x in range(size(img)[1])]
+    return np.array(arr, np.uint8)
+
+
+def f(img, x, y):
+    return img[min(max(0, x), img.shape[0]-1), min(max(0, y), img.shape[1]-1)]
 
 # Q.2
 def imread(filename):
@@ -78,9 +93,6 @@ def histeq(img):
     return np.array([[tr[a]*255 for a in row] for row in img], dtype=np.uint8)
 
 # Q.15
-def f(img, x, y):
-    return img[min(max(0, x), img.shape[0]-1), min(max(0, y), img.shape[1]-1)]
-
 def convolve(img, mask):
     return er(img, mask, sum)
 
@@ -99,22 +111,11 @@ def seSquare():
 # Q.19
 def seCross3():
     return np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
+
 # Q.20
-
-def er(img, w, func):
-    n = nchannels(img)
-    a, b = np.array(w.shape)//2
-    S = np.array([(x, y) for x in range(-b, b + 1) for y in range(-a, a + 1) if w[x + a][y + a] != 0])
-    def er_pix(x, y):
-        rgb = np.array([f(img, x + s[0], y + s[1]) * w[s[0] + a, s[1] + b] for s in S]).reshape(S.shape[0], n)
-        return v_l([func(rgb[:, i]) for i in range(n)], n)
-    arr = [[er_pix(x, y) for y in range(size(img)[0])] for x in range(size(img)[1])]
-    return np.array(arr, np.uint8)
-
 def erode(img, eb):
     return er(img, eb, np.amin)
 
 # Q.21
 def dilate(img, eb):
     return er(img, eb, np.amax)
-
