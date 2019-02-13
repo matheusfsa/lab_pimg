@@ -43,3 +43,24 @@ def gera_img(tresh, adj):
 
     img = rotulacao(img_t, adj)
     return rotToRgb(img)
+
+
+def grad_morf(img, b, n):
+    if n == 1:
+        return img - p.erode(img, b)
+    elif n == 2:
+        return p.dilate(img, b) - img
+    else:
+        return p.dilate(img, b) - p.erode(img, b)
+
+
+def dil_cond(img, b, m):
+    return np.multiply(p.dilate(img, b), m)
+
+
+def equal(a, b):
+    return np.array_equal(a, b)
+
+def create_xk()
+
+def comp_ext(img, )
